@@ -1,6 +1,7 @@
 # Hermes Agent Control Room
 
-![Hermes Agent Control Room](assets/hermes-agent-control-room.png)
+![Uploading image.png…]()
+
 
 A public template for setting up an **Agent Control Room** first, then scaling from one Hermes agent to direct specialists, orchestrated teams, and automated workflows.
 
