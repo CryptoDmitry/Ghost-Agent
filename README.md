@@ -1,6 +1,6 @@
 # Hermes Agent Control Room
 
-![Hermes Agent Control Room](assets/hermes-agent-control-room.png)
+[![Hermes Agent Control Room](assets/hermes-agent-control-room.png)](https://github.com/CryptoDmitry/Molt-Pi-Maker/blob/main/hermes-agent-control-room.png)
 
 A public template for setting up an **Agent Control Room** first, then scaling from one Hermes agent to direct specialists, orchestrated teams, and automated workflows.
 
