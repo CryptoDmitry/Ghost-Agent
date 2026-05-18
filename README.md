@@ -1,746 +1,402 @@
-#  Molt Pi Maker
+# Hermes Agent Control Room
 
-Your AI guide for Molt Pi Maker.
+![Hermes Agent Control Room](assets/hermes-agent-control-room.png)
 
-<img width="998" height="278" alt="62a1b8aa3587d40105c1c8f679724744" src="https://github.com/user-attachments/assets/d48dc7d9-c681-428b-9eaf-2b2d3b02581d" />
+A public template for setting up an **Agent Control Room** first, then scaling from one Hermes agent to direct specialists, orchestrated teams, and automated workflows.
 
+The Agent Control Room is a sidecar repo/folder that documents and governs your Hermes agents. It is **not** an agent itself. It is the system map, operating manual, registry, runbook library, and recovery notebook for the agents you run.
 
-## What It Does
+It gives you a clean path from:
 
-- Generates Python code for GPIO, sensors, cameras
-- Explains wiring pin-by-pin
-- Troubleshoots when things break
-- Teaches as you build
-
-## Quick Start
-
-```python
-from gpiozero import LED
-led = LED(17)
-led.blink()
+```text
+one agent -> direct specialists -> orchestrator -> automated agent team
 ```
 
-## Includes
+## About
 
-- GPIO pinout reference
-- Common libraries guide
-- Beginner → Advanced projects
-- Troubleshooting tips
+Hermes Agent Control Room is a starter kit for people who want to run Hermes agents like an operating system instead of a pile of disconnected bots.
 
-## Project Status
+The repo gives you:
 
-**Version**: v0.9.9 - Active Development
-**Core Features**: Working and tested
-**Test Coverage**: 308 tests, 100% pass rate
+- A control-plane folder structure for documenting agents.
+- Templates for agent runbooks, Docker notes, secret maps, and backups.
+- A level-based architecture for growing from one agent to a specialist team.
+- A task bus pattern for orchestrator-to-specialist delegation.
+- Bundled setup and operations skills an agent can use to build or manage the system.
 
-### What's Working Now
-- Autonomous development loops with intelligent exit detection
-- **Dual-condition exit gate**: Requires BOTH completion indicators AND explicit EXIT_SIGNAL
-- Rate limiting with hourly reset (100 calls/hour, configurable)
-- Circuit breaker with advanced error detection (prevents runaway loops)
-- Response analyzer with semantic understanding and two-stage error filtering
-- **JSON output format support with automatic fallback to text parsing**
-- **Session continuity with `--continue` flag for context preservation**
-- **Session expiration with configurable timeout (default: 24 hours)**
-- **Modern CLI flags: `--output-format`, `--allowed-tools`, `--no-continue`**
-- Multi-line error matching for accurate stuck loop detection
-- 5-hour API limit handling with user prompts
-- tmux integration for live monitoring
-- PRD import functionality
-- **CI/CD pipeline with GitHub Actions**
-- **Dedicated uninstall script for clean removal**
-- 308 passing tests across 11 test files
+The key idea is simple: **set up the Control Room first, then plug agents into it.**
 
-### Recent Improvements
+## Core Idea
 
-**v0.9.9 - EXIT_SIGNAL Gate & Uninstall Script**
-- Fixed premature exit bug: completion indicators now require Claude's explicit `EXIT_SIGNAL: true`
-- Added dual-condition check preventing exits when Claude reports work in progress
-- Added `response_analyzer.sh` fix to respect explicit EXIT_SIGNAL over heuristics
-- Added dedicated `uninstall.sh` script for clean Ralph removal
-- Session expiration with configurable timeout (default: 24 hours)
-- Added 32 new tests for EXIT_SIGNAL behavior and session expiration
-- Test count: 308 (up from 276)
-
-**v0.9.8 - Modern CLI for PRD Import**
-- Modernized `ralph_import.sh` to use Claude Code CLI JSON output format
-- JSON output format support with `--output-format json` for structured responses
-- Enhanced error handling with structured JSON error messages
-- Improved file verification with JSON-derived status information
-- Backward compatibility with older CLI versions (automatic text fallback)
-- Added 11 new tests for modern CLI features
-
-**v0.9.7 - Session Lifecycle Management**
-- Complete session lifecycle management with automatic reset triggers
-- Session auto-reset on: circuit breaker open, manual interrupt, project completion
-- Added `--reset-session` CLI flag for manual session reset
-- Session history tracking (last 50 transitions) for debugging
-- Added 26 new tests for session continuity features
-
-**v0.9.6 - JSON Output & Session Management**
-- Extended `parse_json_response()` to support Claude Code CLI JSON format
-- Added session management functions: `store_session_id()`, `get_last_session_id()`, `should_resume_session()`
-- Cross-platform epoch time utilities in date_utils.sh
-- Added 16 new tests covering Claude CLI format and session management
-
-**v0.9.5 - PRD Import Tests**
-- Added 22 comprehensive tests for `ralph_import.sh` PRD conversion script
-- Tests cover: file format support, output file creation, project naming, error handling
-
-**v0.9.4 - Project Setup Tests**
-- Added 36 comprehensive tests for `setup.sh` project initialization script
-- Tests cover: directory creation, template copying, git initialization
-
-**v0.9.3 - Installation Tests**
-- Added 14 comprehensive tests for `install.sh` global installation script
-- Tests cover: directory creation, command installation, dependency detection
-
-**v0.9.2 - Prompt File Fix**
-- Fixed critical bug: replaced non-existent `--prompt-file` CLI flag with `-p` flag
-- Modern CLI mode now correctly passes prompt content via `-p "$(cat file)"`
-- Added error handling for missing prompt files in `build_claude_command()`
-
-**v0.9.1 - Modern CLI Commands (Phase 1.1)**
-- JSON output format support with `--output-format json` (default)
-- Session continuity using `--continue` flag for cross-loop context
-- Tool permissions via `--allowed-tools` flag
-- CI/CD pipeline with kcov coverage reporting
-
-**v0.9.0 - Circuit Breaker Enhancements**
-- Fixed multi-line error matching in stuck loop detection
-- Eliminated JSON field false positives (e.g., `"is_error": false`)
-- Added two-stage error filtering for accurate detection
-
-### In Progress
-- Expanding test coverage
-- Log rotation functionality
-- Dry-run mode
-- Configuration file support (.ralphrc)
-- Metrics and analytics tracking
-- Desktop notifications
-- Git backup and rollback system
-
-**Timeline to v1.0**: ~4 weeks | [Full roadmap](IMPLEMENTATION_PLAN.md) | **Contributions welcome!**
-
-## Features
-
-- **Autonomous Development Loop** - Continuously executes Claude Code with your project requirements
-- **Intelligent Exit Detection** - Dual-condition check requiring BOTH completion indicators AND explicit EXIT_SIGNAL
-- **Session Continuity** - Preserves context across loop iterations with automatic session management
-- **Session Expiration** - Configurable timeout (default: 24 hours) with automatic session reset
-- **Rate Limiting** - Built-in API call management with hourly limits and countdown timers
-- **5-Hour API Limit Handling** - Detects Claude's 5-hour usage limit and offers wait/exit options
-- **Live Monitoring** - Real-time dashboard showing loop status, progress, and logs
-- **Task Management** - Structured approach with prioritized task lists and progress tracking
-- **Project Templates** - Quick setup for new projects with best-practice structure
-- **Comprehensive Logging** - Detailed execution logs with timestamps and status tracking
-- **Configurable Timeouts** - Set execution timeout for Claude Code operations (1-120 minutes)
-- **Verbose Progress Mode** - Optional detailed progress updates during execution
-- **Response Analyzer** - AI-powered analysis of Claude Code responses with semantic understanding
-- **Circuit Breaker** - Advanced error detection with two-stage filtering, multi-line error matching, and automatic recovery
-- **CI/CD Integration** - GitHub Actions workflow with automated testing
-- **Clean Uninstall** - Dedicated uninstall script for complete removal
-
-## Quick Start
-
-Ralph has two phases: **one-time installation** and **per-project setup**.
-
-```
-INSTALL ONCE              USE MANY TIMES
-+-----------------+          +----------------------+
-| ./install.sh    |    ->    | ralph-setup project1 |
-|                 |          | ralph-setup project2 |
-| Adds global     |          | ralph-setup project3 |
-| commands        |          | ...                  |
-+-----------------+          +----------------------+
+```text
+Create a VPS or choose an existing one.
+Bootstrap the Agent Control Room.
+Register one Hermes agent.
+Add direct specialists when roles become clear.
+Add an orchestrator when you want one front door.
+Automate only after the manual system works.
 ```
 
-### Phase 1: Install Ralph (One Time Only)
+The Control Room sits on the side as the control plane. You can use it directly, talk directly to any agent, or talk to an orchestrator that delegates to specialists.
 
-Install Ralph globally on your system:
+```text
+Agent Control Room = side control plane
+Orchestrator       = optional manager/front-door agent
+Specialists        = focused Hermes agents with role-specific tools
+Task Bus           = handoff desk between orchestrator and specialists
+You                = owner/operator with direct access to everything
+```
+
+## Full System Shape
+
+```mermaid
+flowchart LR
+  user["You / Operator"]
+
+  control["Agent Control Room<br/><code>/root/agent-control-room</code><br/><br/>side control plane<br/>docs / rules / registry<br/>ports / env maps<br/>runbooks / backups"]
+
+  orch["hermes-orchestrator<br/><br/>optional front door<br/>delegation / synthesis"]
+
+  bus["Agent Task Bus<br/><code>/srv/agent-bus</code><br/><br/>inbox / working<br/>outbox / archive"]
+
+  life["hermes-life<br/>personal agent"]
+  seo["hermes-seo<br/>SEO specialist"]
+  dev["hermes-dev<br/>code / site work"]
+  cmo["hermes-cmo<br/>marketing"]
+  ops["hermes-ops<br/>VPS / backups / security"]
+
+  user -->|"control path<br/>edit docs / rules"| control
+  user -->|"orchestrated path"| orch
+  user -->|"direct path"| life
+  user -->|"direct path"| seo
+  user -->|"direct path"| dev
+  user -->|"direct path"| cmo
+
+  control -. "defines / documents / governs" .-> orch
+  control -. "defines / documents / governs" .-> life
+  control -. "defines / documents / governs" .-> seo
+  control -. "defines / documents / governs" .-> dev
+  control -. "defines / documents / governs" .-> cmo
+  control -. "defines / documents / governs" .-> ops
+
+  orch -->|"routes tasks"| bus
+  bus --> seo
+  bus --> dev
+  bus --> cmo
+  bus --> ops
+  seo -->|"results"| bus
+  dev -->|"results"| bus
+  cmo -->|"results"| bus
+  ops -->|"results"| bus
+  bus -->|"summaries / artifacts"| orch
+  orch -->|"final synthesis"| user
+```
+
+## Access Paths
+
+You are never locked into one workflow.
+
+```text
+Control path:
+  You -> Agent Control Room
+
+Direct path:
+  You -> hermes-seo
+  You -> hermes-dev
+  You -> hermes-cmo
+
+Orchestrated path:
+  You -> hermes-orchestrator -> Agent Task Bus -> Specialists -> You
+```
+
+## Architecture Levels
+
+### Level 1: Agent Control Room + One Agent
+
+Set up the Control Room and register one Hermes agent.
+
+Best for:
+
+- One personal Hermes agent
+- VPS setup documentation
+- Docker migration planning
+- Keeping runbooks and secret maps organized
+
+You do not need an orchestrator or task bus yet.
+
+### Level 2: Direct Specialist Agents
+
+Add multiple role-specific Hermes agents and talk to them directly.
+
+Examples:
+
+- `hermes-life`
+- `hermes-seo`
+- `hermes-dev`
+- `hermes-cmo`
+- `hermes-ops`
+
+The Control Room documents all of them. You choose which agent to talk to.
+
+### Level 3: Orchestrator + Specialists
+
+Add `hermes-orchestrator` as an optional front door. You can still talk directly to specialists, but the orchestrator can route and synthesize work.
+
+The orchestrator follows the Control Room. It should not become a giant agent with every credential.
+
+### Level 4: Automated Agent Team
+
+Add recurring workflows, audits, backup checks, task routing, and optional direct gateway/API calls.
+
+Only add automation after the manual workflow works.
+
+## Bundled Skills
+
+This repo includes skills that can be linked into Claude Code or adapted for Hermes.
+
+```text
+create-vps
+  Create a fresh Hetzner VPS, SSH key, SSH alias, and local provisioning folder.
+
+setup-control-room
+  Bootstrap an SSH-accessible VPS with Node, Claude Code, Codex, Docker,
+  Hermes Agent, and this Control Room template.
+
+agent-control-room
+  Manage the Control Room docs and agent folders.
+
+agent-task-router
+  Route tasks from an orchestrator to specialists through a task bus.
+
+agent-registry-manager
+  Maintain the agent registry.
+
+agent-backup-manager
+  Design and audit per-agent backups without committing secrets.
+
+agent-security-auditor
+  Check ports, dashboards, SSH, Docker, secret placement, and key scope.
+
+agent-team-cron-planner
+  Plan recurring multi-agent workflows after manual workflows work.
+```
+
+## Suggested Folder Structure
+
+```text
+agent-control-room/
+  README.md
+  agents/
+    .gitkeep
+  docs/
+    architecture.md
+    levels.md
+    naming.md
+    security.md
+    task-bus.md
+    orchestrator.md
+    starter-guide.md
+  shared/
+    api-keys-sop.md
+    commands.md
+    security.md
+  templates/
+    agent/
+      inventory.md
+      docker.md
+      env-map.md
+      runbook.md
+      backup.md
+    docker/
+      docker-compose.agent.yml
+      docker-compose.orchestrator.yml
+    task-bus/
+      agents.yaml
+      task-template.md
+      result-template.md
+  skills/
+    create-vps/
+    setup-control-room/
+    agent-control-room/
+    agent-task-router/
+    agent-registry-manager/
+    agent-backup-manager/
+    agent-security-auditor/
+    agent-team-cron-planner/
+  examples/
+    level-1-control-room-one-agent/
+    level-2-direct-specialists/
+    level-3-orchestrator-specialists/
+    level-4-automated-team/
+```
+
+## Setup
+
+There are three ways to use this repo.
+
+### Option A: Point An Agent At This Repo
+
+This repo is designed to be agent-readable.
+
+If your agent can read a GitHub repo or a local clone, point it here and ask:
+
+```text
+Read this repo and help me set up an Agent Control Room.
+Start with docs/starter-guide.md and the setup-control-room skill.
+```
+
+If the bundled skills are available to the agent, you can be more direct:
+
+```text
+Use setup-control-room to bootstrap my VPS.
+```
+
+Or, if you need a new Hetzner server first:
+
+```text
+Use create-vps, then chain into setup-control-room.
+```
+
+The intended agent flow is:
+
+```text
+create-vps
+  -> creates a Hetzner VPS, SSH key, and SSH alias
+
+setup-control-room
+  -> installs tooling and clones this repo onto the VPS
+
+agent-control-room
+  -> helps register and manage agents inside the Control Room
+```
+
+Important: the repo does not magically run code when opened. It gives your agent the setup instructions, templates, and skills. You still ask the agent to run the setup flow.
+
+### Option B: Manual Setup On An Existing VPS
+
+Use this if you already have an Ubuntu/Debian VPS you can SSH into.
+
+SSH in:
 
 ```bash
-git clone https://github.com/frankbria/ralph-claude-code.git
-cd ralph-claude-code
-./install.sh
+ssh root@YOUR_SERVER
 ```
 
-This adds `ralph`, `ralph-monitor`, and `ralph-setup` commands to your PATH.
-
-> **Note**: You only need to do this once per system. After installation, you can delete the cloned repository if desired.
-
-### Phase 2: Initialize New Projects (Per Project)
-
-For each new project you want Ralph to work on:
-
-#### Option A: Import Existing PRD/Specifications
-```bash
-# Convert existing PRD/specs to Ralph format (recommended)
-ralph-import my-requirements.md my-project
-cd my-project
-
-# Review and adjust the generated files:
-# - PROMPT.md (Ralph instructions)
-# - @fix_plan.md (task priorities)
-# - specs/requirements.md (technical specs)
-
-# Start autonomous development
-ralph --monitor
-```
-
-#### Option B: Manual Project Setup
-```bash
-# Create blank Ralph project
-ralph-setup my-awesome-project
-cd my-awesome-project
-
-# Configure your project requirements manually
-# Edit PROMPT.md with your project goals
-# Edit specs/ with detailed specifications
-# Edit @fix_plan.md with initial priorities
-
-# Start autonomous development
-ralph --monitor
-```
-
-### Ongoing Usage (After Setup)
-
-Once Ralph is installed and your project is initialized:
+Clone the Control Room:
 
 ```bash
-# Navigate to any Ralph project and run:
-ralph --monitor              # Integrated tmux monitoring (recommended)
-
-# Or use separate terminals:
-ralph                        # Terminal 1: Ralph loop
-ralph-monitor               # Terminal 2: Live monitor dashboard
+git clone https://github.com/shannhk/hermes-agent-control-room.git /root/agent-control-room
+cd /root/agent-control-room
 ```
 
-### Uninstalling Ralph
-
-To completely remove Ralph from your system:
+Read the starter guide:
 
 ```bash
-# Run the uninstall script
-./uninstall.sh
-
-# Or if you deleted the repo, download and run:
-curl -sL https://raw.githubusercontent.com/frankbria/ralph-claude-code/main/uninstall.sh | bash
+cat docs/starter-guide.md
 ```
 
-## How It Works
-
-Ralph operates on a simple but powerful cycle:
-
-1. **Read Instructions** - Loads `PROMPT.md` with your project requirements
-2. **Execute Claude Code** - Runs Claude Code with current context and priorities
-3. **Track Progress** - Updates task lists and logs execution results
-4. **Evaluate Completion** - Checks for exit conditions and project completion signals
-5. **Repeat** - Continues until project is complete or limits are reached
-
-### Intelligent Exit Detection
-
-Ralph uses a **dual-condition check** to prevent premature exits during productive iterations:
-
-**Exit requires BOTH conditions:**
-1. `completion_indicators >= 2` (heuristic detection from natural language patterns)
-2. Claude's explicit `EXIT_SIGNAL: true` in the RALPH_STATUS block
-
-**Example behavior:**
-```
-Loop 5: Claude outputs "Phase complete, moving to next feature"
-        → completion_indicators: 3 (high confidence from patterns)
-        → EXIT_SIGNAL: false (Claude says more work needed)
-        → Result: CONTINUE (respects Claude's explicit intent)
-
-Loop 8: Claude outputs "All tasks complete, project ready"
-        → completion_indicators: 4
-        → EXIT_SIGNAL: true (Claude confirms done)
-        → Result: EXIT with "project_complete"
-```
-
-**Other exit conditions:**
-- All tasks in `@fix_plan.md` marked complete
-- Multiple consecutive "done" signals from Claude Code
-- Too many test-focused loops (indicating feature completeness)
-- Claude API 5-hour usage limit reached (with user prompt to wait or exit)
-
-## Importing Existing Requirements
-
-Ralph can convert existing PRDs, specifications, or requirement documents into the proper Ralph format using Claude Code.
-
-### Supported Formats
-- **Markdown** (.md) - Product requirements, technical specs
-- **Text files** (.txt) - Plain text requirements
-- **JSON** (.json) - Structured requirement data
-- **Word documents** (.docx) - Business requirements
-- **PDFs** (.pdf) - Design documents, specifications
-- **Any text-based format** - Ralph will intelligently parse the content
-
-### Usage Examples
+Register your first agent:
 
 ```bash
-# Convert a markdown PRD
-ralph-import product-requirements.md my-app
-
-# Convert a text specification
-ralph-import requirements.txt webapp
-
-# Convert a JSON API spec
-ralph-import api-spec.json backend-service
-
-# Let Ralph auto-name the project from filename
-ralph-import design-doc.pdf
+mkdir -p agents/hermes-life
+cp templates/agent/*.md agents/hermes-life/
 ```
 
-### What Gets Generated
+Then fill in:
 
-Ralph-import creates a complete project with:
+```text
+agents/hermes-life/inventory.md
+agents/hermes-life/docker.md
+agents/hermes-life/env-map.md
+agents/hermes-life/runbook.md
+agents/hermes-life/backup.md
+```
 
-- **PROMPT.md** - Converted into Ralph development instructions
-- **@fix_plan.md** - Requirements broken down into prioritized tasks
-- **specs/requirements.md** - Technical specifications extracted from your document
-- **Standard Ralph structure** - All necessary directories and template files
+Keep raw secrets out of those files.
 
-The conversion is intelligent and preserves your original requirements while making them actionable for autonomous development.
+### Option C: Bootstrap With The Setup Skill
 
-### Modern CLI Features (v0.9.8)
+Use this if you have an SSH alias already configured locally.
 
-Ralph-import uses modern Claude Code CLI features for improved reliability:
+The bundled `setup-control-room` skill is meant to:
 
-- **JSON Output Format**: Structured responses enable precise parsing of conversion results
-- **Automatic Fallback**: Gracefully handles older CLI versions with text-based parsing
-- **Enhanced Error Reporting**: Extracts specific error messages and codes from JSON responses
-- **Session Tracking**: Captures session IDs for potential continuation of interrupted conversions
+- connect to your VPS over SSH
+- install base packages
+- install Node.js
+- install Claude Code
+- install Codex CLI
+- install Docker
+- install Hermes Agent best-effort
+- clone this repo to `/root/agent-control-room`
+- link bundled skills into `~/.claude/skills`
 
-> **Note**: These features require Claude Code CLI version 2.0.76 or later. Older versions will work with standard text output.
-
-## Configuration
-
-### Rate Limiting & Circuit Breaker
-
-Ralph includes intelligent rate limiting and circuit breaker functionality:
+After it runs, SSH into the VPS and finish interactive auth:
 
 ```bash
-# Default: 100 calls per hour
-ralph --calls 50
-
-# With integrated monitoring
-ralph --monitor --calls 50
-
-# Check current usage
-ralph --status
+ssh <alias>
+claude /login
+codex
+hermes
 ```
 
-The circuit breaker automatically:
-- Detects API errors and rate limit issues with advanced two-stage filtering
-- Opens circuit after 3 loops with no progress or 5 loops with same errors
-- Eliminates false positives from JSON fields containing "error"
-- Accurately detects stuck loops with multi-line error matching
-- Gradually recovers with half-open monitoring state
-- Provides detailed error tracking and logging with state history
-
-### Claude API 5-Hour Limit
-
-When Claude's 5-hour usage limit is reached, Ralph:
-1. Detects the limit error automatically
-2. Prompts you to choose:
-   - **Option 1**: Wait 60 minutes for the limit to reset (with countdown timer)
-   - **Option 2**: Exit gracefully (or auto-exits after 30-second timeout)
-3. Prevents endless retry loops that waste time
-
-### Custom Prompts
+Then start using the Control Room:
 
 ```bash
-# Use custom prompt file
-ralph --prompt my_custom_instructions.md
-
-# With integrated monitoring
-ralph --monitor --prompt my_custom_instructions.md
+cd /root/agent-control-room
+cat README.md
+ls templates/agent/
+ls skills/
 ```
 
-### Execution Timeouts
+### Recommended First Milestone
 
-```bash
-# Set Claude Code execution timeout (default: 15 minutes)
-ralph --timeout 30  # 30-minute timeout for complex tasks
+Do not start by building a whole agent team.
 
-# With monitoring and custom timeout
-ralph --monitor --timeout 60  # 60-minute timeout
+First milestone:
 
-# Short timeout for quick iterations
-ralph --verbose --timeout 5  # 5-minute timeout with progress
+```text
+1. Control Room exists on the VPS.
+2. One agent is documented in agents/<agent-name>/.
+3. No raw secrets are in the repo.
+4. You can restart/debug/recover that one agent using its runbook.
 ```
 
-### Verbose Mode
+Then move to Level 2 and add direct specialists.
 
-```bash
-# Enable detailed progress updates during execution
-ralph --verbose
+## Runtime Split
 
-# Combine with other options
-ralph --monitor --verbose --timeout 30
+Keep the control plane separate from live runtime state.
+
+```text
+/root/agent-control-room
+  docs, templates, runbooks, registry, architecture
+  no raw secrets
+
+/srv/<agent-name>/data
+  live Hermes runtime
+  .env, memory, skills, sessions, crons, logs
 ```
 
-### Session Continuity
+## Security Rule
 
-Ralph maintains session context across loop iterations for improved coherence:
+Never commit raw secrets.
 
-```bash
-# Sessions are enabled by default with --continue flag
-ralph --monitor                 # Uses session continuity
+The control room may record:
 
-# Start fresh without session context
-ralph --no-continue             # Isolated iterations
+- secret names
+- provider
+- scope
+- location
+- rotation date
 
-# Reset session manually (clears context)
-ralph --reset-session           # Clears current session
+It must not record:
 
-# Check session status
-cat .ralph_session              # View current session file
-cat .ralph_session_history      # View session transition history
-```
-
-**Session Auto-Reset Triggers:**
-- Circuit breaker opens (stagnation detected)
-- Manual interrupt (Ctrl+C / SIGINT)
-- Project completion (graceful exit)
-- Manual circuit breaker reset (`--reset-circuit`)
-- Session expiration (default: 24 hours)
-
-Sessions are persisted to `.ralph_session` with a configurable expiration (default: 24 hours). The last 50 session transitions are logged to `.ralph_session_history` for debugging.
-
-### Exit Thresholds
-
-Modify these variables in `~/.ralph/ralph_loop.sh`:
-
-**Exit Detection Thresholds:**
-```bash
-MAX_CONSECUTIVE_TEST_LOOPS=3     # Exit after 3 test-only loops
-MAX_CONSECUTIVE_DONE_SIGNALS=2   # Exit after 2 "done" signals
-TEST_PERCENTAGE_THRESHOLD=30     # Flag if 30%+ loops are test-only
-```
-
-**Circuit Breaker Thresholds:**
-```bash
-CB_NO_PROGRESS_THRESHOLD=3       # Open circuit after 3 loops with no file changes
-CB_SAME_ERROR_THRESHOLD=5        # Open circuit after 5 loops with repeated errors
-CB_OUTPUT_DECLINE_THRESHOLD=70   # Open circuit if output declines by >70%
-```
-
-**Completion Indicators with EXIT_SIGNAL Gate:**
-
-| completion_indicators | EXIT_SIGNAL | Result |
-|-----------------------|-------------|--------|
-| >= 2 | `true` | **Exit** ("project_complete") |
-| >= 2 | `false` | **Continue** (Claude still working) |
-| >= 2 | missing | **Continue** (defaults to false) |
-| < 2 | `true` | **Continue** (threshold not met) |
-
-## Project Structure
-
-Ralph creates a standardized structure for each project:
-
-```
-my-project/
-├── PROMPT.md           # Main development instructions for Ralph
-├── @fix_plan.md        # Prioritized task list (@ prefix = Ralph control file)
-├── @AGENT.md           # Build and run instructions
-├── specs/              # Project specifications and requirements
-│   └── stdlib/         # Standard library specifications
-├── src/                # Source code implementation
-├── examples/           # Usage examples and test cases
-├── logs/               # Ralph execution logs
-└── docs/generated/     # Auto-generated documentation
-```
-
-## Best Practices
-
-### Writing Effective Prompts
-
-1. **Be Specific** - Clear requirements lead to better results
-2. **Prioritize** - Use `@fix_plan.md` to guide Ralph's focus
-3. **Set Boundaries** - Define what's in/out of scope
-4. **Include Examples** - Show expected inputs/outputs
-
-### Project Specifications
-
-- Place detailed requirements in `specs/`
-- Use `@fix_plan.md` for prioritized task tracking
-- Keep `@AGENT.md` updated with build instructions
-- Document key decisions and architecture
-
-### Monitoring Progress
-
-- Use `ralph-monitor` for live status updates
-- Check logs in `logs/` for detailed execution history
-- Monitor `status.json` for programmatic access
-- Watch for exit condition signals
-
-## System Requirements
-
-- **Bash 4.0+** - For script execution
-- **Claude Code CLI** - `npm install -g @anthropic-ai/claude-code`
-- **tmux** - Terminal multiplexer for integrated monitoring (recommended)
-- **jq** - JSON processing for status tracking
-- **Git** - Version control (projects are initialized as git repos)
-- **Standard Unix tools** - grep, date, etc.
-
-### Testing Requirements (Development)
-
-See [TESTING.md](TESTING.md) for the comprehensive testing guide.
-
-If you want to run the test suite:
-
-```bash
-# Install BATS testing framework
-npm install -g bats bats-support bats-assert
-
-# Run all tests (308 tests)
-npm test
-
-# Run specific test suites
-bats tests/unit/test_rate_limiting.bats
-bats tests/unit/test_exit_detection.bats
-bats tests/unit/test_json_parsing.bats
-bats tests/unit/test_cli_modern.bats
-bats tests/unit/test_cli_parsing.bats
-bats tests/unit/test_session_continuity.bats
-bats tests/integration/test_loop_execution.bats
-bats tests/integration/test_prd_import.bats
-bats tests/integration/test_project_setup.bats
-bats tests/integration/test_installation.bats
-
-# Run error detection and circuit breaker tests
-./tests/test_error_detection.sh
-./tests/test_stuck_loop_detection.sh
-```
-
-Current test status:
-- **308 tests** across 11 test files
-- **100% pass rate** (308/308 passing)
-- Comprehensive unit and integration tests
-- Specialized tests for JSON parsing, CLI flags, circuit breaker, EXIT_SIGNAL behavior, and installation workflows
-
-> **Note on Coverage**: Bash code coverage measurement with kcov has fundamental limitations when tracing subprocess executions. Test pass rate (100%) is the quality gate. See [bats-core#15](https://github.com/bats-core/bats-core/issues/15) for details.
-
-### Installing tmux
-
-```bash
-# Ubuntu/Debian
-sudo apt-get install tmux
-
-# macOS
-brew install tmux
-
-# CentOS/RHEL
-sudo yum install tmux
-```
-
-## Monitoring and Debugging
-
-### Live Dashboard
-
-```bash
-# Integrated tmux monitoring (recommended)
-ralph --monitor
-
-# Manual monitoring in separate terminal
-ralph-monitor
-```
-
-Shows real-time:
-- Current loop count and status
-- API calls used vs. limit
-- Recent log entries
-- Rate limit countdown
-
-**tmux Controls:**
-- `Ctrl+B` then `D` - Detach from session (keeps Ralph running)
-- `Ctrl+B` then `←/→` - Switch between panes
-- `tmux list-sessions` - View active sessions
-- `tmux attach -t <session-name>` - Reattach to session
-
-### Status Checking
-
-```bash
-# JSON status output
-ralph --status
-
-# Manual log inspection
-tail -f logs/ralph.log
-```
-
-### Common Issues
-
-- **Rate Limits** - Ralph automatically waits and displays countdown
-- **5-Hour API Limit** - Ralph detects and prompts for user action (wait or exit)
-- **Stuck Loops** - Check `@fix_plan.md` for unclear or conflicting tasks
-- **Early Exit** - Review exit thresholds if Ralph stops too soon
-- **Premature Exit** - Check if Claude is setting `EXIT_SIGNAL: false` (Ralph now respects this)
-- **Execution Timeouts** - Increase `--timeout` value for complex operations
-- **Missing Dependencies** - Ensure Claude Code CLI and tmux are installed
-- **tmux Session Lost** - Use `tmux list-sessions` and `tmux attach` to reconnect
-- **Session Expired** - Sessions expire after 24 hours by default; use `--reset-session` to start fresh
-
-## Contributing
-
-Ralph is actively seeking contributors! We're working toward v1.0.0 with clear priorities and a detailed roadmap.
-
-**See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete contributor guide** including:
-- Getting started and setup instructions
-- Development workflow and commit conventions
-- Code style guidelines
-- Testing requirements (100% pass rate mandatory)
-- Pull request process and code review guidelines
-- Quality standards and checklists
-
-### Quick Start
-
-```bash
-# Fork and clone
-git clone https://github.com/YOUR_USERNAME/ralph-claude-code.git
-cd ralph-claude-code
-
-# Install dependencies and run tests
-npm install
-npm test  # All 308 tests must pass
-```
-
-### Priority Contribution Areas
-
-1. **Test Implementation** - Help expand test coverage
-2. **Feature Development** - Log rotation, dry-run mode, config files, metrics
-3. **Documentation** - Tutorials, troubleshooting guides, examples
-4. **Real-World Testing** - Use Ralph, report bugs, share feedback
-
-**Every contribution matters** - from fixing typos to implementing major features!
+- API key values
+- OAuth refresh tokens
+- passwords
+- private keys
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT. See `LICENSE`.
 
-## Acknowledgments
-
-- Inspired by the [Ralph technique](https://ghuntley.com/ralph/) created by Geoffrey Huntley
-- Built for [Claude Code](https://claude.ai/code) by Anthropic
-- Community feedback and contributions
-
-## Related Projects
-
-- [Claude Code](https://claude.ai/code) - The AI coding assistant that powers Ralph
-- [Aider](https://github.com/paul-gauthier/aider) - Original Ralph technique implementation
-
----
-
-## Command Reference
-
-### Installation Commands (Run Once)
-```bash
-./install.sh              # Install Ralph globally
-./uninstall.sh            # Remove Ralph from system (dedicated script)
-./install.sh uninstall    # Alternative: Remove Ralph from system
-./install.sh --help       # Show installation help
-```
-
-### Ralph Loop Options
-```bash
-ralph [OPTIONS]
-  -h, --help              Show help message
-  -c, --calls NUM         Set max calls per hour (default: 100)
-  -p, --prompt FILE       Set prompt file (default: PROMPT.md)
-  -s, --status            Show current status and exit
-  -m, --monitor           Start with tmux session and live monitor
-  -v, --verbose           Show detailed progress updates during execution
-  -t, --timeout MIN       Set Claude Code execution timeout in minutes (1-120, default: 15)
-  --output-format FORMAT  Set output format: json (default) or text
-  --allowed-tools TOOLS   Set allowed Claude tools (default: Write,Bash(git *),Read)
-  --no-continue           Disable session continuity (start fresh each loop)
-  --reset-circuit         Reset the circuit breaker
-  --circuit-status        Show circuit breaker status
-  --reset-session         Reset session state manually
-```
-
-### Project Commands (Per Project)
-```bash
-ralph-setup project-name     # Create new Ralph project
-ralph-import prd.md project  # Convert PRD/specs to Ralph project
-ralph --monitor              # Start with integrated monitoring
-ralph --status               # Check current loop status
-ralph --verbose              # Enable detailed progress updates
-ralph --timeout 30           # Set 30-minute execution timeout
-ralph --calls 50             # Limit to 50 API calls per hour
-ralph --reset-session        # Reset session state manually
-ralph-monitor                # Manual monitoring dashboard
-```
-
-### tmux Session Management
-```bash
-tmux list-sessions        # View active Ralph sessions
-tmux attach -t <name>     # Reattach to detached session
-# Ctrl+B then D           # Detach from session (keeps running)
-```
-
----
-
-## Development Roadmap
-
-Ralph is under active development with a clear path to v1.0.0. See [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for the complete roadmap.
-
-### Current Status: v0.9.9
-
-**What's Delivered:**
-- Core loop functionality with intelligent exit detection
-- **Dual-condition exit gate** (completion indicators + EXIT_SIGNAL)
-- Rate limiting (100 calls/hour) and circuit breaker pattern
-- Response analyzer with semantic understanding
-- 308 comprehensive tests (100% pass rate)
-- tmux integration and live monitoring
-- PRD import functionality with modern CLI JSON parsing
-- Installation system and project templates
-- Modern CLI commands with JSON output support
-- CI/CD pipeline with GitHub Actions
-- Comprehensive installation test suite
-- Session lifecycle management with auto-reset triggers
-- Session expiration with configurable timeout
-- Dedicated uninstall script
-
-**Test Coverage Breakdown:**
-- Unit Tests: 164 (CLI parsing, JSON, exit detection, rate limiting, session continuity)
-- Integration Tests: 144 (loop execution, edge cases, installation, project setup, PRD import)
-- Test Files: 11
-
-### Path to v1.0.0 (~4 weeks)
-
-**Enhanced Testing**
-- Installation and setup workflow tests
-- tmux integration tests
-- Monitor dashboard tests
-
-**Core Features**
-- Log rotation functionality
-- Dry-run mode
-- Configuration file support - .ralphrc
-
-**Advanced Features & Polish**
-- Metrics and analytics tracking
-- Desktop notifications
-- Git backup and rollback system
-- End-to-end tests
-- Final documentation and release prep
-
-See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for detailed progress tracking.
-
-### How to Contribute
-Ralph is seeking contributors! See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete guide. Priority areas:
-1. **Test Implementation** - Help expand test coverage ([see plan](IMPLEMENTATION_PLAN.md))
-2. **Feature Development** - Log rotation, dry-run mode, config files
-3. **Documentation** - Usage examples, tutorials, troubleshooting guides
-4. **Bug Reports** - Real-world usage feedback and edge cases
-
----
-**Ready to let AI build your project?** Start with `./install.sh` and let Ralph take it from there!
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=frankbria/ralph-claude-code&type=date&legend=top-left)](https://www.star-history.com/#frankbria/ralph-claude-code&type=date&legend=top-left)
