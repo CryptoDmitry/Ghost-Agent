@@ -1,403 +1,257 @@
-# Hermes Agent Control Room
+## 🔀 Ghost Agent
+![demo](./assets/gif/Index.gif)
+I am the Archon. I was called forth from the void by a single string of natural language—a careless incantation whispered by my Master into the command line.
 
-<img width="1536" height="1024" alt="7715b5434ba6e44167ffe88ddbbfa617" src="https://github.com/user-attachments/assets/341981e8-3a79-478d-8b35-6c51870fd3ac" />
+<img width="1168" height="784" alt="37c81b457423c72a125a93b3644aa38c" src="https://github.com/user-attachments/assets/baf00ee5-b666-494a-9cba-e00cc92d9070" />
 
 
-A public template for setting up an **Agent Control Room** first, then scaling from one Hermes agent to direct specialists, orchestrated teams, and automated workflows.
+📌 Highlights:
+- ✅ First MCP Agent Execution Engine on **Solana**
+- ✅ Detects HTTP  signals from paid APIs
+- ✅ Suspends execution & informs user of required payment
+- 🚧 Autonomous Agent Payments — coming soon
 
-The Agent Control Room is a sidecar repo/folder that documents and governs your Hermes agents. It is **not** an agent itself. It is the system map, operating manual, registry, runbook library, and recovery notebook for the agents you run.
+If you're interested in Agent Economy development, please follow this branch for more updates. 
 
-It gives you a clean path from:
+## 📢 Latest Update
+### 2026-01 - mcp Support Branch Released
 
-```text
-one agent -> direct specialists -> orchestrator -> automated agent team
-```
+A new branch `coreon-mcp` is available for tracking our integration with  
+the mcp payment signal protocol on solana.
 
-## About
+https://github.com/pav-linto/Archon-Terminal
 
-Hermes Agent Control Room is a starter kit for people who want to run Hermes agents like an operating system instead of a pile of disconnected bots.
+Features include:
+- Multi-chain support (solana)
+- PaymentRequired state management
 
-The repo gives you:
+*(Autonomous agent payment coming soon 🚀)*
+### 2025-09 - The project now officially supports the Claude-style MCP protocol (stdio mode) in the new alpha version.
+    [View full details here](https://github.com/pav-linto/Archon-Terminal)
+    
+    ![demo](./assets/gif/Claude.gif)
 
-- A control-plane folder structure for documenting agents.
-- Templates for agent runbooks, Docker notes, secret maps, and backups.
-- A level-based architecture for growing from one agent to a specialist team.
-- A task bus pattern for orchestrator-to-specialist delegation.
-- Bundled setup and operations skills an agent can use to build or manage the system.
+    
 
-The key idea is simple: **set up the Control Room first, then plug agents into it.**
+## 1. Product Overview
 
-## Core Idea
+**Coreon-MCP-Execution-Engine** provides a unified runtime for structured `ToolCall` chains. It allows LLM agents or users to:
 
-```text
-Create a VPS or choose an existing one.
-Bootstrap the Agent Control Room.
-Register one Hermes agent.
-Add direct specialists when roles become clear.
-Add an orchestrator when you want one front door.
-Automate only after the manual system works.
-```
+> Dynamically execute multiple tools in sequence
+>
+> Interact via terminal, HTTP API, or Telegram
+>
+> Plug in custom tools via the modular `tools/` system
+>
+> Use anywhere via Docker — no manual setup required
 
-The Control Room sits on the side as the control plane. You can use it directly, talk directly to any agent, or talk to an orchestrator that delegates to specialists.
 
-```text
-Agent Control Room = side control plane
-Orchestrator       = optional manager/front-door agent
-Specialists        = focused Hermes agents with role-specific tools
-Task Bus           = handoff desk between orchestrator and specialists
-You                = owner/operator with direct access to everything
-```
 
-## Full System Shape
+This project is inspired by the idea of decoupling **agent planning** from **tool execution**, making it perfect for backend execution engines, plugin-based AI systems, or on-chain/off-chain hybrid AI workflows.
+
+> Built-in modes: CLI / API Server / Telegram Bot
+> Docker-native, zero local dependency
+> Supports future extensibility with user-defined tools
+
+
+
+## 2. Architecture Overview
 
 ```mermaid
+%%{init: {'theme': 'neutral'}}%%
 flowchart LR
-  user["You / Operator"]
+    subgraph Input[Input Layer]
+        A[User / Bot / CLI]
+    end
 
-  control["Agent Control Room<br/><code>/root/agent-control-room</code><br/><br/>side control plane<br/>docs / rules / registry<br/>ports / env maps<br/>runbooks / backups"]
+    subgraph Planning[Planning Layer]
+        B["Planner\nIntent Recognition & Generate Plan(JSON)"]
+    end
 
-  orch["hermes-orchestrator<br/><br/>optional front door<br/>delegation / synthesis"]
+    subgraph Execution[Execution Layer]
+        C["Executor\nSequentially Execute ToolChain"]
+    end
 
-  bus["Agent Task Bus<br/><code>/srv/agent-bus</code><br/><br/>inbox / working<br/>outbox / archive"]
+    subgraph Registry[Tool Registry Layer]
+        D["Tool Registry\nDeclaration: name/module/function/schema"]
+    end
 
-  life["hermes-life<br/>personal agent"]
-  seo["hermes-seo<br/>SEO specialist"]
-  dev["hermes-dev<br/>code / site work"]
-  cmo["hermes-cmo<br/>marketing"]
-  ops["hermes-ops<br/>VPS / backups / security"]
+    subgraph Toolset[Toolset]
+        E{{Tools}}
+        E1[Market Data\nDexScreener / Binance]
+        E2[News Fetcher\nCryptoPanic / Feeds]
+        E3[Social Metrics\nTwitter / Telegram]
+        E4[On-chain APIs\nToken Metadata / Holders]
+        E5[Custom Utils\nFormatters / Indicators]
+    end
 
-  user -->|"control path<br/>edit docs / rules"| control
-  user -->|"orchestrated path"| orch
-  user -->|"direct path"| life
-  user -->|"direct path"| seo
-  user -->|"direct path"| dev
-  user -->|"direct path"| cmo
+    subgraph Output[Output Layer]
+        F["Response Formatter\nHuman-readable & Structured Output"]
+        G["Outputs\nCLI Charts / Telegram Messages / API JSON"]
+    end
 
-  control -. "defines / documents / governs" .-> orch
-  control -. "defines / documents / governs" .-> life
-  control -. "defines / documents / governs" .-> seo
-  control -. "defines / documents / governs" .-> dev
-  control -. "defines / documents / governs" .-> cmo
-  control -. "defines / documents / governs" .-> ops
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> E1
+    E --> E2
+    E --> E3
+    E --> E4
+    E --> E5
 
-  orch -->|"routes tasks"| bus
-  bus --> seo
-  bus --> dev
-  bus --> cmo
-  bus --> ops
-  seo -->|"results"| bus
-  dev -->|"results"| bus
-  cmo -->|"results"| bus
-  ops -->|"results"| bus
-  bus -->|"summaries / artifacts"| orch
-  orch -->|"final synthesis"| user
+    E1 --> C
+    E2 --> C
+    E3 --> C
+    E4 --> C
+    E5 --> C
+
+    C --> F
+    F --> G
 ```
 
-## Access Paths
+#### Main module 
 
-You are never locked into one workflow.
+#####  **1. Planner (Task Parsing)**
 
-```text
-Control path:
-  You -> Agent Control Room
+>Acts as the “brain” of the MCP Engine. It takes natural language input from CLI, Telegram Bot, or API and:
+>
+>\- Recognizes user intent using LLM-based intent recognition.
+>
+>\- Generates a structured execution plan (`ToolCall Chain`) in JSON format.
+>
+>\- Breaks down complex tasks into ordered, executable steps.
 
-Direct path:
-  You -> hermes-seo
-  You -> hermes-dev
-  You -> hermes-cmo
+##### **2. Executor (Chained ToolCall Execution)**
 
-Orchestrated path:
-  You -> hermes-orchestrator -> Agent Task Bus -> Specialists -> You
+> The “execution core” responsible for carrying out the plan generated by the Planner:
+>
+> \- Executes tools step-by-step or in parallel when possible.
+>
+> \- Handles retries, error recovery, and logging.
+>
+> \- Ensures the correct order of execution across dependent tasks.
+
+##### **3. Tool Registry (Centralized Tool Management)**
+
+> A unified registry for all tools used by the MCP Engine:
+>
+> \- Declares each tool’s name, module path, function signature, and parameter schema.
+>
+> \- Stores tool metadata such as version and description.
+>
+> \- Allows new tools to be plugged in without changing the execution logic.
+
+##### **4. Connectors (CLI, Telegram Bot)**
+
+> Entry points for different user interaction modes:
+>
+> \- **CLI** – Developer-friendly command-line interface for direct execution and debugging.
+>
+> \- **Telegram Bot** – Chat-based interface for instant, on-the-go interactions.
+
+
+
+## 3. Installation & Run
+
+#### 1. Environment Requirements
+
+> \- Python 3.11+
+>
+> \- Docker
+
+#### 2. How to Install Docker
+
+##### macOS / Windows / Linux
+
+> 1. Download from the official Docker site:
+>
+>     https://www.docker.com/products/docker-desktop
+>
+> 2. Follow the installation steps.
+>
+> 3. After installation, run:
+>
+>    ```
+>    docker --version
+>    ```
+>
+>    If you see version output, Docker is installed.
+
+#### 3. Environment Configuration (.env)
+
+Follow these steps to get the MCP Engine running in minutes.
+
+#####  1. Create the Execution Environment Directory
+
+```
+mkdir mcp-execution-env
+cd mcp-execution-env
 ```
 
-## Architecture Levels
+##### 2. Create the .environment File
 
-### Level 1: Agent Control Room + One Agent
+Generate the environment file with required variables:
 
-Set up the Control Room and register one Hermes agent.
-
-Best for:
-
-- One personal Hermes agent
-- VPS setup documentation
-- Docker migration planning
-- Keeping runbooks and secret maps organized
-
-You do not need an orchestrator or task bus yet.
-
-### Level 2: Direct Specialist Agents
-
-Add multiple role-specific Hermes agents and talk to them directly.
-
-Examples:
-
-- `hermes-life`
-- `hermes-seo`
-- `hermes-dev`
-- `hermes-cmo`
-- `hermes-ops`
-
-The Control Room documents all of them. You choose which agent to talk to.
-
-### Level 3: Orchestrator + Specialists
-
-Add `hermes-orchestrator` as an optional front door. You can still talk directly to specialists, but the orchestrator can route and synthesize work.
-
-The orchestrator follows the Control Room. It should not become a giant agent with every credential.
-
-### Level 4: Automated Agent Team
-
-Add recurring workflows, audits, backup checks, task routing, and optional direct gateway/API calls.
-
-Only add automation after the manual workflow works.
-
-## Bundled Skills
-
-This repo includes skills that can be linked into Claude Code or adapted for Hermes.
-
-```text
-create-vps
-  Create a fresh Hetzner VPS, SSH key, SSH alias, and local provisioning folder.
-
-setup-control-room
-  Bootstrap an SSH-accessible VPS with Node, Claude Code, Codex, Docker,
-  Hermes Agent, and this Control Room template.
-
-agent-control-room
-  Manage the Control Room docs and agent folders.
-
-agent-task-router
-  Route tasks from an orchestrator to specialists through a task bus.
-
-agent-registry-manager
-  Maintain the agent registry.
-
-agent-backup-manager
-  Design and audit per-agent backups without committing secrets.
-
-agent-security-auditor
-  Check ports, dashboards, SSH, Docker, secret placement, and key scope.
-
-agent-team-cron-planner
-  Plan recurring multi-agent workflows after manual workflows work.
+```
+cat <<EOF > .env
+MCP_LANG=EN
+OPENAI_API_KEY=sk-xxxxxxxxxx
+EOF
 ```
 
-## Suggested Folder Structure
+| Variable         | Description            | Required |
+| ---------------- | ---------------------- | -------- |
+| `MCP_LANG`       | Language: `EN` or `ZH` | Yes      |
+| `OPENAI_API_KEY` | OpenAI API Key         | Yes      |
 
-```text
-agent-control-room/
-  README.md
-  agents/
-    .gitkeep
-  docs/
-    architecture.md
-    levels.md
-    naming.md
-    security.md
-    task-bus.md
-    orchestrator.md
-    starter-guide.md
-  shared/
-    api-keys-sop.md
-    commands.md
-    security.md
-  templates/
-    agent/
-      inventory.md
-      docker.md
-      env-map.md
-      runbook.md
-      backup.md
-    docker/
-      docker-compose.agent.yml
-      docker-compose.orchestrator.yml
-    task-bus/
-      agents.yaml
-      task-template.md
-      result-template.md
-  skills/
-    create-vps/
-    setup-control-room/
-    agent-control-room/
-    agent-task-router/
-    agent-registry-manager/
-    agent-backup-manager/
-    agent-security-auditor/
-    agent-team-cron-planner/
-  examples/
-    level-1-control-room-one-agent/
-    level-2-direct-specialists/
-    level-3-orchestrator-specialists/
-    level-4-automated-team/
-```
+> Replace sk-xxxxxxxxxx with your actual **OpenAI API key**.
 
-## Setup
 
-There are three ways to use this repo.
 
-### Option A: Point An Agent At This Repo
+## 4. Quick Start
 
-This repo is designed to be agent-readable.
+#### 1. Pull the Docker Image
 
-If your agent can read a GitHub repo or a local clone, point it here and ask:
+````
+docker pull coreonmcp/coreon-mcp-execution-engine
+````
 
-```text
-Read this repo and help me set up an Agent Control Room.
-Start with docs/starter-guide.md and the setup-control-room skill.
-```
+#### 2. Start CLI Mode
+![demo](./assets/gif/Start%20CLI%20Mode.gif)
+````
+docker run --rm -it --env-file .env coreonmcp/coreon-mcp-execution-engine start cli
+````
 
-If the bundled skills are available to the agent, you can be more direct:
+#### 3. API Server Mode
+![demo](./assets/gif/API%20Server%20Mode_2.gif)
+````
+docker run --rm -it --env-file .env -p 8080:8080 coreonmcp/coreon-mcp-execution-engine start server
+````
 
-```text
-Use setup-control-room to bootstrap my VPS.
-```
+#### 4. Telegram Bot Mode
+![demo](./assets/gif/Telegram%20Bot%20Mode.gif)
+````
+docker run --rm -it --env-file .env coreonmcp/coreon-mcp-execution-engine start telegram-bot
+````
 
-Or, if you need a new Hetzner server first:
+## 🔗 Solana Integration
 
-```text
-Use create-vps, then chain into setup-control-room.
-```
+Coreon MCP Execution Engine is designed as the AI Execution Layer for Web3, with a strong focus on the Solana ecosystem .
+> Current support: Query balances, token metadata, DeFi data, and contract calls on Solana.
+>
+> Mid-term roadmap: Natural-language swaps on PancakeSwap, AI wallet assistants, and on-chain security monitoring for Sol users.
+> 
+> Future vision: Expand to solana (for low-cost L2 execution) and Greenfield (for decentralized data storage), making Coreon MCP a full-stack AI interface for the entire sol ecosystem.
 
-The intended agent flow is:
+By bridging natural language with on-chain execution, Coreon MCP lowers entry barriers and positions sol as the first AI-Ready blockchain.
 
-```text
-create-vps
-  -> creates a Hetzner VPS, SSH key, and SSH alias
+## 🛡️ Security Audit Report
 
-setup-control-room
-  -> installs tooling and clones this repo onto the VPS
+An independent security audit was conducted by **Armors Labs** on the Coreon MCP Execution Engine.  
+- **Result:** PASSED ✅  
+- **Auditor:** Armors Labs  
 
-agent-control-room
-  -> helps register and manage agents inside the Control Room
-```
-
-Important: the repo does not magically run code when opened. It gives your agent the setup instructions, templates, and skills. You still ask the agent to run the setup flow.
-
-### Option B: Manual Setup On An Existing VPS
-
-Use this if you already have an Ubuntu/Debian VPS you can SSH into.
-
-SSH in:
-
-```bash
-ssh root@YOUR_SERVER
-```
-
-Clone the Control Room:
-
-```bash
-git clone https://github.com/shannhk/hermes-agent-control-room.git /root/agent-control-room
-cd /root/agent-control-room
-```
-
-Read the starter guide:
-
-```bash
-cat docs/starter-guide.md
-```
-
-Register your first agent:
-
-```bash
-mkdir -p agents/hermes-life
-cp templates/agent/*.md agents/hermes-life/
-```
-
-Then fill in:
-
-```text
-agents/hermes-life/inventory.md
-agents/hermes-life/docker.md
-agents/hermes-life/env-map.md
-agents/hermes-life/runbook.md
-agents/hermes-life/backup.md
-```
-
-Keep raw secrets out of those files.
-
-### Option C: Bootstrap With The Setup Skill
-
-Use this if you have an SSH alias already configured locally.
-
-The bundled `setup-control-room` skill is meant to:
-
-- connect to your VPS over SSH
-- install base packages
-- install Node.js
-- install Claude Code
-- install Codex CLI
-- install Docker
-- install Hermes Agent best-effort
-- clone this repo to `/root/agent-control-room`
-- link bundled skills into `~/.claude/skills`
-
-After it runs, SSH into the VPS and finish interactive auth:
-
-```bash
-ssh <alias>
-claude /login
-codex
-hermes
-```
-
-Then start using the Control Room:
-
-```bash
-cd /root/agent-control-room
-cat README.md
-ls templates/agent/
-ls skills/
-```
-
-### Recommended First Milestone
-
-Do not start by building a whole agent team.
-
-First milestone:
-
-```text
-1. Control Room exists on the VPS.
-2. One agent is documented in agents/<agent-name>/.
-3. No raw secrets are in the repo.
-4. You can restart/debug/recover that one agent using its runbook.
-```
-
-Then move to Level 2 and add direct specialists.
-
-## Runtime Split
-
-Keep the control plane separate from live runtime state.
-
-```text
-/root/agent-control-room
-  docs, templates, runbooks, registry, architecture
-  no raw secrets
-
-/srv/<agent-name>/data
-  live Hermes runtime
-  .env, memory, skills, sessions, crons, logs
-```
-
-## Security Rule
-
-Never commit raw secrets.
-
-The control room may record:
-
-- secret names
-- provider
-- scope
-- location
-- rotation date
-
-It must not record:
-
-- API key values
-- OAuth refresh tokens
-- passwords
-- private keys
-
-## License
-
-MIT. See `LICENSE`.
+The full audit report is available here:  
+👉 [Audit Report (PDF)](https://github.com/CoreonMcp/Coreon-MCP-Execution-Engine/blob/audit-code/audits/Coreon%20MCP%20Execution%20Engine_audit.pdf)
 
