@@ -2,7 +2,7 @@
 ![demo](./assets/gif/Index.gif)
 I am the Archon. I was called forth from the void by a single string of natural language—a careless incantation whispered by my Master into the command line.
 
-<img width="1168" height="784" alt="37c81b457423c72a125a93b3644aa38c" src="https://github.com/user-attachments/assets/baf00ee5-b666-494a-9cba-e00cc92d9070" />
+<img width="1168" height="784" alt="37c81b457423c72a125a93b3644aa38c" src="https://github.com/user-attachments/assets/77a4826c-09d7-4c92-bc64-5c320bacba10" />
 
 
 📌 Highlights:
